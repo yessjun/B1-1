@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>신예준 포트폴리오</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/main.js" defer></script>
+</head>
+<body>
+  <header class="header" id="header">
+    <nav class="nav" aria-label="주요 메뉴">
+      <a class="logo" href="#home">yessjun</a>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button type="button" class="theme-toggle" id="theme-toggle" aria-label="다크 모드 전환">
+          <span id="theme-icon">🌙</span>
+        </button>
+        <button type="button" class="hamburger" id="hamburger" aria-label="메뉴 열기" aria-expanded="false" aria-controls="nav-menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <p class="hero-greeting">Hello!</p>
+      <h1 class="hero-title">저는 <span class="typing" id="typing"></span><span class="caret" aria-hidden="true"></span></h1>
+      <p class="hero-description">부산에서 플랫폼과 백엔드를 공부하고 있습니다. 만든 것들을 아래에 모아두었습니다.</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="#projects">프로젝트 보기</a>
+        <a class="button button-outline" href="#contact">연락하기</a>
+      </div>
+    </section>
+
+    <section class="section" id="about">
+      <h2 class="section-title">About</h2>
+      <div class="about">
+        <img class="about-photo" src="images/profile.jpg" alt="신예준의 프로필 사진" width="420" height="420">
+        <div class="about-text">
+          <p>부산대학교 정보컴퓨터공학부에 재학 중이고, 서비스를 굴러가게 만드는 쪽에 관심이 많습니다. 음성 아카이브 서비스에서는 STT 파이프라인과 백엔드를, 사내 도구에서는 배포와 운영 환경을 맡았습니다.</p>
+          <p>코드를 쓰는 시간만큼 왜 이렇게 만들었는지 남기는 시간을 두려고 합니다. 최근에는 AWS 위에 직접 네트워크를 구성해 서비스를 올리고, 그 과정을 문서로 정리하는 작업을 했습니다.</p>
+          <ul class="about-facts">
+            <li><strong>전공</strong> 부산대학교 정보컴퓨터공학부</li>
+            <li><strong>활동</strong> SW Maestro 16기, BoB 8기</li>
+            <li><strong>위치</strong> 부산</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="skills">
+      <h2 class="section-title">Skills</h2>
+      <div class="skill-groups">
+        <article class="skill-card">
+          <h3>Language</h3>
+          <ul class="skill-list">
+            <li>Python</li>
+            <li>TypeScript</li>
+            <li>Java</li>
+            <li>Go</li>
+            <li>C</li>
+          </ul>
+        </article>
+        <article class="skill-card">
+          <h3>Backend</h3>
+          <ul class="skill-list">
+            <li>FastAPI</li>
+            <li>Spring</li>
+            <li>PostgreSQL</li>
+            <li>REST API</li>
+          </ul>
+        </article>
+        <article class="skill-card">
+          <h3>Infra</h3>
+          <ul class="skill-list">
+            <li>AWS EC2, VPC</li>
+            <li>Docker</li>
+            <li>nginx</li>
+            <li>Linux</li>
+            <li>Git</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <section class="section" id="projects">
+      <h2 class="section-title">Projects</h2>
+      <p class="section-description">GitHub 공개 저장소를 불러와 표시합니다. 언어 버튼으로 걸러 볼 수 있습니다.</p>
+      <div class="filters" id="filters" role="group" aria-label="언어 필터"></div>
+      <p class="projects-state" id="projects-state" role="status"></p>
+      <ul class="project-grid" id="project-list"></ul>
+    </section>
+
+    <section class="section" id="contact">
+      <h2 class="section-title">Contact</h2>
+      <p class="section-description">궁금한 점이나 같이 해보고 싶은 일이 있으면 남겨주세요.</p>
+      <form class="contact-form" id="contact-form" novalidate>
+        <div class="field">
+          <label for="name">이름</label>
+          <input type="text" id="name" name="name" autocomplete="name">
+          <p class="field-error" id="name-error"></p>
+        </div>
+        <div class="field">
+          <label for="email">이메일</label>
+          <input type="email" id="email" name="email" autocomplete="email">
+          <p class="field-error" id="email-error"></p>
+        </div>
+        <div class="field">
+          <label for="message">메시지</label>
+          <textarea id="message" name="message" rows="6"></textarea>
+          <p class="field-error" id="message-error"></p>
+        </div>
+        <button class="button button-primary" type="submit" id="submit-button">보내기</button>
+        <p class="form-result" id="form-result" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>&copy; 2026 신예준</p>
+    <ul class="social">
+      <li><a href="https://github.com/yessjun" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://www.linkedin.com/in/yejun-shin" target="_blank" rel="noopener">LinkedIn</a></li>
+    </ul>
+  </footer>
+
+  <button type="button" class="to-top" id="to-top" aria-label="맨 위로 이동">↑</button>
+</body>
+</html>
