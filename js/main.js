@@ -163,13 +163,14 @@ function renderFilters() {
     .join("");
 
   filters.querySelectorAll(".filter-button").forEach((button) => {
-    button.classList.toggle("active", button.dataset.language === state.language);
     button.addEventListener("click", () => {
+      filters.querySelector(".filter-button.active").classList.remove("active");
+      button.classList.add("active");
       state.language = button.dataset.language;
-      renderFilters();
       renderProjects();
     });
   });
+  filters.querySelector(".filter-button").classList.add("active");
 }
 
 async function loadProjects() {

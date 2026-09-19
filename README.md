@@ -27,7 +27,7 @@ $ code --list-extensions --show-versions | grep -i liveserver
 ritwickdey.liveserver@5.7.10
 ```
 
-VS Code에서 작성하고 Live Server 확장으로 띄운 로컬 서버에서 확인하면서 진행했습니다. 브라우저는 Chrome 153입니다.
+VS Code에서 작성했고, 실시간 확인용으로 Live Server 확장 5.7.10을 설치했습니다. 브라우저 확인은 Chrome 153에서 했습니다.
 
 ## 디렉터리 구조
 
@@ -391,7 +391,7 @@ Projects 섹션은 GitHub에서 받아온 저장소를 카드로 보여주고, �
 
 ## 보너스: 언어별 프로젝트 필터링
 
-받아온 저장소의 `language` 값을 모아 중복을 없애고 버튼을 만듭니다. 버튼을 누르면 선택한 언어를 상태에 넣고 목록을 다시 그립니다. 걸러내는 일은 `filter`가 하고, 언어를 지정하지 않은 저장소는 `Other`로 묶었습니다.
+받아온 저장소의 `language` 값을 모아 중복을 없애고 버튼을 만듭니다. 버튼을 누르면 눌린 표시를 옮기고, 선택한 언어를 상태에 넣은 뒤 목록을 다시 그립니다. 걸러내는 일은 `filter`가 하고, 언어를 지정하지 않은 저장소는 `Other`로 묶었습니다.
 
 ```javascript
 function renderFilters() {
@@ -401,13 +401,14 @@ function renderFilters() {
     .join("");
 
   filters.querySelectorAll(".filter-button").forEach((button) => {
-    button.classList.toggle("active", button.dataset.language === state.language);
     button.addEventListener("click", () => {
+      filters.querySelector(".filter-button.active").classList.remove("active");
+      button.classList.add("active");
       state.language = button.dataset.language;
-      renderFilters();
       renderProjects();
     });
   });
+  filters.querySelector(".filter-button").classList.add("active");
 }
 ```
 
