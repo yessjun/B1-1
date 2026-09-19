@@ -366,3 +366,25 @@ contactForm.addEventListener("submit", (event) => {
   contactForm.reset();
 });
 ```
+
+## 화면
+
+데스크톱 첫 화면입니다. Hero 문구는 한 글자씩 나타났다가 다음 문장으로 바뀝니다.
+
+![데스크톱 Hero 섹션](docs/assets/desktop-hero.png)
+
+Projects 섹션은 GitHub에서 받아온 저장소를 카드로 보여주고, 위쪽 버튼으로 언어를 고를 수 있습니다.
+
+![데스크톱 Projects 섹션](docs/assets/desktop-projects.png)
+
+다크 모드입니다. 토글 버튼을 누르면 배경, 글자, 카드, 테두리 색이 함께 바뀝니다.
+
+![다크 모드로 본 Projects 섹션](docs/assets/dark-mode.png)
+
+모바일 폭 390px입니다. 메뉴가 햄버거 버튼 안으로 들어가고, 버튼을 누르면 아래로 펼쳐집니다.
+
+![모바일에서 메뉴를 펼친 화면](docs/assets/mobile-menu.png)
+
+같은 폭에서 Projects 섹션은 카드가 한 열로 쌓입니다.
+
+![모바일 Projects 섹션](docs/assets/mobile-projects.png)
