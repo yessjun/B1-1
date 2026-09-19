@@ -2,7 +2,7 @@
 
 HTML, CSS, JavaScript만으로 반응형 포트폴리오 웹사이트를 만들고 GitHub Pages에 배포했습니다. React, jQuery, Bootstrap 같은 라이브러리는 사용하지 않았고, Projects 섹션은 GitHub API로 제 공개 저장소를 받아와 화면에 그립니다.
 
-배포 주소는 아래 배포 절에 있습니다.
+배포 주소는 https://yessjun.github.io/B1-1/ 입니다.
 
 ## 사용 기술
 
@@ -388,3 +388,155 @@ Projects 섹션은 GitHub에서 받아온 저장소를 카드로 보여주고, �
 같은 폭에서 Projects 섹션은 카드가 한 열로 쌓입니다.
 
 ![모바일 Projects 섹션](docs/assets/mobile-projects.png)
+
+## 보너스: 언어별 프로젝트 필터링
+
+받아온 저장소의 `language` 값을 모아 중복을 없애고 버튼을 만듭니다. 버튼을 누르면 선택한 언어를 상태에 넣고 목록을 다시 그립니다. 걸러내는 일은 `filter`가 하고, 언어를 지정하지 않은 저장소는 `Other`로 묶었습니다.
+
+```javascript
+function renderFilters() {
+  const languages = ["All", ...new Set(state.repos.map((repo) => repo.language))];
+  filters.innerHTML = languages
+    .map((language) => `<button type="button" class="filter-button" data-language="${language}">${language}</button>`)
+    .join("");
+
+  filters.querySelectorAll(".filter-button").forEach((button) => {
+    button.classList.toggle("active", button.dataset.language === state.language);
+    button.addEventListener("click", () => {
+      state.language = button.dataset.language;
+      renderFilters();
+      renderProjects();
+    });
+  });
+}
+```
+
+## 보너스: Hero 타이핑 효과
+
+문장 세 개를 한 글자씩 늘렸다가 다시 지우고 다음 문장으로 넘어갑니다. 글자를 더할 때와 지울 때 간격을 다르게 두었고, 문장을 다 쓴 뒤에는 1.5초 머무릅니다. 커서는 CSS 애니메이션으로 깜빡입니다.
+
+```javascript
+function runTyping(wordIndex, letterIndex, deleting) {
+  const word = TYPING_WORDS[wordIndex];
+  typing.textContent = word.slice(0, letterIndex);
+
+  if (!deleting && letterIndex === word.length) {
+    setTimeout(() => runTyping(wordIndex, letterIndex, true), 1500);
+    return;
+  }
+  if (deleting && letterIndex === 0) {
+    runTyping((wordIndex + 1) % TYPING_WORDS.length, 0, false);
+    return;
+  }
+  const nextIndex = deleting ? letterIndex - 1 : letterIndex + 1;
+  setTimeout(() => runTyping(wordIndex, nextIndex, deleting), deleting ? 60 : 120);
+}
+```
+
+## 보너스: 시스템 다크 모드 감지
+
+저장된 테마가 없을 때만 `prefers-color-scheme`을 확인해 초기 테마를 정합니다. 한 번이라도 토글 버튼을 누르면 그 선택이 로컬스토리지에 남아 시스템 설정보다 앞섭니다. 위 다크 모드 절의 `initTheme`가 이 순서를 담고 있습니다.
+
+## 배포
+
+GitHub Pages로 배포했습니다. 저장소의 `main` 브랜치 루트를 그대로 게시하는 방식이라 빌드 과정은 없습니다.
+
+```bash
+$ curl -sI https://yessjun.github.io/B1-1/ | head -3
+HTTP/2 200 
+server: GitHub.com
+content-type: text/html; charset=utf-8
+
+$ curl -s -o /dev/null -w "%{http_code} %{url_effective}\n" https://yessjun.github.io/B1-1/css/style.css
+200 https://yessjun.github.io/B1-1/css/style.css
+200 https://yessjun.github.io/B1-1/js/main.js
+200 https://yessjun.github.io/B1-1/images/profile.jpg
+```
+
+배포된 주소에서 저장소 목록 불러오기, 언어 필터, 다크 모드와 새로고침 후 유지, 폼 검증, 햄버거 메뉴를 다시 확인했습니다. 경로를 상대경로로 적었기 때문에 `/B1-1/` 하위에 올라가도 스타일시트와 스크립트, 이미지가 그대로 붙습니다.
+
+## 실행 방법
+
+저장소를 받아 VS Code로 열고 Live Server 확장의 Go Live를 누르면 됩니다. 확장 없이 확인하려면 폴더에서 정적 서버를 실행해도 됩니다.
+
+```bash
+$ git clone https://github.com/yessjun/B1-1.git
+$ cd B1-1
+$ python3 -m http.server 8081
+```
+
+`file://`로 열면 GitHub API 호출이 막히므로 서버를 통해 열어야 합니다.
+
+## 개념 정리
+
+### 시맨틱 태그와 구조 설계
+
+`div`는 의미가 없는 상자라서 화면을 다 만들고 나면 어디가 무슨 영역인지 코드만 보고는 알기 어렵습니다. `header`, `nav`, `main`, `section`, `article`, `footer`는 태그 이름 자체가 역할을 말해주고, 스크린 리더와 검색 엔진도 같은 정보를 사용합니다.
+
+구조는 방문자가 읽는 순서대로 잘랐습니다. 먼저 누구인지 알리고(Hero), 배경을 설명하고(About), 다룰 줄 아는 것을 보여주고(Skills), 실제 결과물을 늘어놓고(Projects), 연락 수단으로 끝냅니다(Contact). 각 덩어리는 문서 안에서 독립된 주제라 `section`으로 감쌌고, 그 안에서 카드처럼 하나씩 떼어도 말이 되는 단위는 `article`로 감쌌습니다. 상단 고정 영역은 `header`, 그 안의 링크 묶음은 `nav`입니다.
+
+### Flexbox와 Grid
+
+Flexbox는 한 방향으로 늘어놓는 도구이고 Grid는 행과 열을 같이 잡는 도구입니다. 네비게이션은 로고와 메뉴, 버튼을 가로 한 줄에 배치하고 남는 공간을 어떻게 나눌지만 정하면 되므로 Flexbox가 맞습니다. 반면 Projects 카드는 화면 폭에 따라 한 줄에 들어갈 개수가 달라져야 하고, 세로 간격도 같이 맞춰야 해서 Grid를 사용했습니다.
+
+`repeat(auto-fit, minmax(260px, 1fr))`은 열 개수를 직접 세지 않고 "카드가 260px보다 작아지면 줄을 바꾼다"는 규칙만 적는 방식입니다. 미디어 쿼리로 열 개수를 단계마다 지정하지 않아도 되므로 카드 개수가 API 응답에 따라 달라지는 이 화면에 맞습니다.
+
+### DOM 선택과 이벤트 연결
+
+`querySelector`는 CSS 선택자로 요소 하나를, `querySelectorAll`은 조건에 맞는 요소 전부를 가져옵니다. 가져온 요소에 `addEventListener`로 동작을 붙이면, 어떤 이벤트에 무엇이 실행되는지가 자바스크립트 파일 한 곳에 모입니다. HTML에 `onclick`을 적으면 화면 구조와 동작이 섞이고, 같은 요소에 동작을 둘 이상 붙이기도 어렵습니다.
+
+이 페이지에서는 다섯 종류를 다룹니다. 버튼의 `click`, 폼의 `submit`, 입력 칸의 `input`, 창의 `scroll`, 그리고 Intersection Observer가 대신 알려주는 화면 진입입니다. 앵커 링크와 폼은 브라우저가 원래 하려던 동작이 있어서 `event.preventDefault()`로 먼저 막고 직접 처리합니다.
+
+### ES6 문법과 배열 메서드
+
+화살표 함수는 짧게 쓸 수 있고 자기 `this`를 만들지 않아 콜백으로 넘기기 좋습니다. 이벤트 처리기와 `map`, `filter`에 넘기는 함수는 전부 화살표 함수입니다.
+
+구조분해 할당은 객체에서 필요한 값만 이름을 적어 꺼내는 문법입니다. GitHub 응답에는 서른 개가 넘는 필드가 들어 있는데, 화면에 쓰는 것은 이름, 설명, 언어, 스타 수, 주소 다섯 개뿐이라 꺼내 쓰는 쪽이 코드가 짧아집니다.
+
+```javascript
+.map(({ name, description, language, stargazers_count, html_url }) => ({
+```
+
+배열 메서드는 목적이 이름에 드러납니다. `map`은 저장소 데이터를 카드 HTML 문자열로 바꾸고, `filter`는 포크 제외와 언어 선택에 쓰이고, `forEach`는 버튼마다 이벤트를 연결할 때처럼 값을 돌려받을 필요가 없을 때 사용합니다. 반복문을 직접 쓰는 것과 결과는 같지만, 무엇을 하려는지가 한 단어로 보입니다.
+
+### 비동기 데이터와 상태 표현
+
+`fetch`는 네트워크 응답을 기다리는 동안 다음 코드를 막지 않고 Promise를 돌려줍니다. `async/await`를 쓰면 그 Promise를 기다리는 코드를 위에서 아래로 읽히는 모양으로 쓸 수 있습니다.
+
+요청은 성공만 하는 것이 아니라서 화면에는 네 가지 상태가 필요합니다. 요청을 보낸 직후에는 로딩 문구, 성공하면 카드 목록, 실패하면 안내 문구와 다시 시도 버튼, 성공했지만 항목이 없으면 빈 상태 문구입니다. 네트워크 자체가 끊기면 `fetch`가 예외를 던지고, 서버가 403 같은 응답을 주면 예외 대신 `response.ok`가 거짓이 됩니다. 두 경우를 같이 다루려고 상태 코드를 확인해 직접 예외를 던지고 `try/catch`에서 한 번에 받습니다.
+
+### 이벤트에서 화면까지
+
+하나의 기능은 이벤트를 받아 상태를 바꾸고, 바뀐 상태로 화면을 다시 그리는 순서로 만들었습니다. 화면을 직접 고치는 대신 상태를 고치고 다시 그리면, 지금 화면이 어떤 상태인지 코드 한 곳만 보면 됩니다. 이 페이지에는 그런 흐름이 세 가지 있습니다.
+
+| 이벤트 | 바뀌는 상태 | 화면 |
+|---|---|---|
+| 토글 버튼 클릭 | `state.theme` | `data-theme` 속성이 바뀌며 전체 색이 교체됩니다 |
+| 저장소 요청과 응답 | `state.status`, `state.repos` | Projects 영역이 로딩, 목록, 에러, 빈 상태 중 하나로 그려집니다 |
+| 폼 제출과 입력 | 필드별 검증 결과 | 해당 입력 아래 에러 메시지와 테두리 색이 바뀝니다 |
+
+언어 필터도 같은 모양입니다. 버튼을 누르면 `state.language`만 바꾸고 목록을 다시 그립니다. 카드를 직접 지우거나 숨기지 않습니다.
+
+React를 쓰면 이 다시 그리는 부분을 라이브러리가 맡고 상태만 선언하면 되는데, 지금은 그 자리에 `renderProjects` 같은 함수를 직접 두었습니다.
+
+## 트러블슈팅
+
+### 필터 버튼에 빈 이름이 생기는 문제
+
+저장소 목록을 먼저 받아보니 `language`가 `null`인 항목이 있었습니다. 그대로 버튼을 만들면 이름이 없는 버튼이 생기고 카드의 언어 자리도 비어 보입니다. 값을 꺼낼 때 `language || "Other"`로 기본값을 주고, 필터도 이 값으로 묶었습니다. 같은 응답에 포크한 저장소도 섞여 있어서 목록에 넣기 전에 `fork`가 참인 항목을 걸러냈습니다.
+
+```bash
+$ curl -s "https://api.github.com/users/yessjun/repos?per_page=100" | grep -c '"fork": true'
+4
+```
+
+### 에러 상태를 실제로 확인하기
+
+에러 화면은 요청이 실패해야 볼 수 있는데 GitHub API는 대체로 성공합니다. 브라우저 콘솔에서 `fetch`를 잠시 실패하도록 바꿔놓고 다시 불러와 확인했습니다.
+
+```javascript
+window.fetch = () => Promise.resolve({ ok: false, status: 403 });
+loadProjects();
+```
+
+이때 안내 문구와 다시 시도 버튼이 나타나는 것, 버튼을 누르면 다시 요청하는 것을 확인했습니다. 다시 시도 버튼은 `innerHTML`로 에러 문구를 그릴 때마다 새로 만들어지므로, 버튼을 그린 직후에 이벤트를 연결해야 합니다. 그리는 코드 바깥에서 한 번만 연결하면 두 번째 실패부터는 눌러도 반응하지 않습니다.
